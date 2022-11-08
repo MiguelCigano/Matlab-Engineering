@@ -23,27 +23,30 @@ B=[1;0];
 ##A=[-1 2;2.2 1.7];
 ##B=[2;1.6];
 
-T = 200;
+T = 30;
 
 %K1 = [1.18188  -0.66629] %K PI online
 
-%K1 = [1.14529  -0.66850] %K PI online
+##K1 = [1.14529  -0.66850] %K PI online
+K1 = [1  -0.3] %K arbitraria
 
-%x(:,1)=[0.5;-0.4];
+x(:,1)=[0.5;-0.4];
 
-%for i=1:T
-%    x(:,i+1)=A*x(:,i)-B*K1*x(:,i);
-%end
+for i=1:T
+    x(:,i+1)=A*x(:,i)-B*K1*x(:,i);
+end
+
+
 [inp,wk]=michirp(0.01,690000,T+1,0.05);
 
 K2 = [1.17051  -0.68524] %DLQR off line
 
-x2(:,1)=[0.5;-0.4];
-
-for i=1:T
-    u=K2*x2(:,i) + inp(i,2)*0.102
-    x2(:,i+1)=A*x2(:,i)-B*u;
-end
+##x2(:,1)=[0.5;-0.4];
+##
+##for i=1:T
+##    u=K2*x2(:,i) + inp(i,2)*0.102
+##    x2(:,i+1)=A*x2(:,i)-B*u;
+##end
 
 
 %Q-learning
@@ -61,20 +64,27 @@ figure(1)
 hold on;
 grid on;
 
-##plot( (1:T), x(1,1:T),"marker", "v", "markerEdgeColor", "k", ... 
-##     "markersize", 4, "linewidth", 2, "color","r");
-    
-plot( (1:T), x2(1,1:T),"marker", "s", "markerEdgeColor", "k", ... 
-     "markersize", 4, "linewidth", 2, "linestyle", "-", "color","blue");
+plot( (1:T), x(1,1:T),"marker", "v", "markerEdgeColor", "k", ... 
+     "markersize", 4, "linewidth", 2, "color","b");
+
+plot( (1:T), x(2,1:T),"marker", "o", "markerEdgeColor", "k", ... 
+     "markersize", 4, "linewidth", 2, "color","r");     
+     
+%% 
+ 
+##plot( (1:T), x2(1,1:T),"marker", "v", "markerEdgeColor", "k", ... 
+##     "markersize", 4, "linewidth", 2, "linestyle", "-", "color","blue");
 
 ##plot( (1:T), x3(1,1:T),"marker", "d", "markerEdgeColor", "k", ... 
 ##     "markersize", 6, "linewidth", 2, "linestyle", ":", "color","black");
 
-xlabel("Tiempo [ k ]")
+xlabel("Tiempo k")
+ylabel("x_{1}, x_{2}")
+set(gca, 'FontSize', 17)
 xlim ([1,T])
      
-title({"Sistema estable", "Muestras con PE", T})
+%title({"Sistema estable", "Muestras con PE", T})
 %legend("PI - en línea: Estado x_{1}","DLQR: Estado x_{1}", "Q-learning: Estado x_{1}")
-legend("Estado x_{1} - PE")
+legend("Estado x_{1}", "Estado x_{2}")
 
 

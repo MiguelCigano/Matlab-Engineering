@@ -2,6 +2,9 @@ close all;
 clear all;
 clc;
 
+set(0, "defaultlinelinewidth", 2)
+
+##04 de Nov Este código se deja listo para integrar las multigráficas
 
 ##Algoritmo de PI usando aproximadores en el crítico y en el actor para dinámica 
 ##parcialmente conocida, (concimiento únicamente de la matriz B).
@@ -68,7 +71,7 @@ K_2 = -K(1, 2)
 
 T = 250;                                      %Tiempo total T
 p = 3;                                        %Número de terminos independientes en nuestra matriz P_e
-num_exp = 30;                                 %Números de experimentos
+num_exp = 5;                                 %Números de experimentos
 n_ls = 7;                                     %Tamaño de lote para LS (mínimos cuadrados por lotes)
 l = 0;
 con = 0;
@@ -113,20 +116,20 @@ while exp<num_exp
 %Crítico------------------------------------------------------------------------
 
   for i=1:T
-    if (convergencia==1)
+    if (convergencia==1) %Convergencia a ayua a detener el algoritmo
       datos = datos + 1;
       %u=K*x(:,i) + inp(i,2)*0.102;     
       %u=K*x(:,i);
       
-      if exp == 1
-      u=K*x(:,i) + c_r*inp(i,2)*0.102;     
+      if exp >= 1
+      u = K*x(:,i) + c_r*inp(i,2)*0.102;     
       end
       
-      if exp > 1
-        u=K*x(:,i);
-      end
+##      if exp > 1
+##        u=K*x(:,i);
+##      end
       
-      x(:,i+1)=A*x(:,i) + B*u;
+      x(:,i+1) = A*x(:,i) + B*u;
        
       r(i,:) = x(:,i)'*Q*x(:,i) + u'*R*u;
            
@@ -168,9 +171,9 @@ while exp<num_exp
         
         if (abs(e_k)<condicion_e_k)
           convergencia = 0;
-          datos;
+          datos
           vec_datos(1,dd) = datos;
-          c_r = 0;
+          c_r = 0;  %Detenemos la PE sobre la entrada de control
           dd = dd+1;
         end  
         
@@ -201,7 +204,7 @@ while exp<num_exp
   
   for i=1:datos
     
-      sigma_k = x(:, i) %Sigma (x_k)
+      sigma_k = x(:, i); %Sigma (x_k)
       dphi(:,:) = [2*x(1,i+1) 0; 2*x(2,i+1) 2*x(1,i+1); 0 2*x(2,i+1)];
 
       
@@ -233,7 +236,7 @@ while exp<num_exp
     
 endwhile
 
-%final_ruido = min(vec_datos)
+final_ruido = min(vec_datos)
 e_rls;
 K_e
 P_e
@@ -307,7 +310,7 @@ plot( (1:datos+1), x(1,1:datos+1),"marker", "v", "markerEdgeColor", "k", ...
 plot( (1:datos+1), x(2,1:datos+1),"marker", "o", "markerEdgeColor", "k", ... 
       "markersize", 4, "linewidth", 2, "color","b");
 xlabel("tiempo [ k ]")
-%line([final_ruido final_ruido], [0 1], "linestyle", "--", "linewidth", 2,  "color", "black")
+line([final_ruido final_ruido], [0 1], "linestyle", "--", "linewidth", 2,  "color", "black")
 xlim ([0, datos])
 
 title({"HDP (VI)"; T})
